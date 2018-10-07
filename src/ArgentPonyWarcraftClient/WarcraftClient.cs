@@ -21,49 +21,20 @@ namespace ArgentPonyWarcraftClient
         /// <summary>
         ///     Initializes a new instance of the <see cref="WarcraftClient"/> class.
         /// </summary>
-        /// <remarks>
-        ///     Defaults the region to US and the locale to "en_US".
-        /// </remarks>
-        /// <param name="apiKey">The API key.</param>
-        public WarcraftClient(string apiKey) : this(apiKey, Region.US, Locale.en_US)
-        {
-        }
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="WarcraftClient"/> class.
-        /// </summary>
-        /// <param name="apiKey">Blizzard Mashery API key. To create an API key visit https://dev.battle.net/member/register </param>
-        /// <param name="region">Specifies the region that the API will retrieve its data from.</param>
-        /// <param name="locale">
-        ///     Specifies the language that the result will be in. Visit
-        ///     https://dev.battle.net/docs/read/community_apis to see a list of available locales.
-        /// </param>
-        public WarcraftClient(string apiKey, Region region, Locale locale) : this(apiKey, region, locale, InternalHttpClient.Instance)
-        {
-        }
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="WarcraftClient"/> class.
-        /// </summary>
-        /// <param name="apiKey">Blizzard Mashery API key. To create an API key visit https://dev.battle.net/member/register </param>
-        /// <param name="region">Specifies the region that the API will retrieve its data from.</param>
-        /// <param name="locale">
-        ///     Specifies the language that the result will be in. Visit
-        ///     https://dev.battle.net/docs/read/community_apis to see a list of available locales.
-        /// </param>
+        /// <param name="options">The configuration options.</param>
         /// <param name="client">The <see cref="HttpClient"/> that communicates with Blizzard.</param>
-        public WarcraftClient(string apiKey, Region region, Locale locale, HttpClient client)
+        public WarcraftClient(WarcraftClientOptions options, HttpClient client)
         {
             _client = client ?? throw new ArgumentNullException(nameof(client));
-            _apiKey = apiKey ?? throw new ArgumentNullException(nameof(apiKey));
+            _apiKey = options?.ApiKey ?? throw new ArgumentNullException(nameof(options.ApiKey));
 
-            if (!ValidateRegionLocale(locale, region))
+            if (!ValidateRegionLocale(options.Locale, options.Region))
             {
                 throw new ArgumentException("The locale selected is not supported by the selected region.");
             }
 
-            _region = region;
-            _locale = locale;
+            _region = options.Region;
+            _locale = options.Locale;
         }
 
         /// <summary>

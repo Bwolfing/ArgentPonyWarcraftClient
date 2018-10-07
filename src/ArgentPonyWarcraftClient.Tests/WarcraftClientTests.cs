@@ -35,10 +35,12 @@ namespace ArgentPonyWarcraftClient.Tests
                 .Respond(mediaType: "application/json", content: Resources.AuctionDataFileResponse);
 
             IWarcraftClient warcraftClient = new WarcraftClient(
-                apiKey: "keyhere",
-                region: Region.US,
-                locale: Locale.en_US,
-                client: mockHttp.ToHttpClient());
+                new WarcraftClientOptions
+                {
+                    ApiKey = "keyhere"
+                },
+                client: mockHttp.ToHttpClient()
+            );
 
             RequestResult<AuctionFiles> result = await warcraftClient.GetAuctionAsync("Norgannon");
             Assert.NotNull(result.Value.Files);
@@ -449,7 +451,15 @@ namespace ArgentPonyWarcraftClient.Tests
         {
             Assert.Throws<ArgumentException>(() =>
             {
-                IWarcraftClient client = new WarcraftClient("APIKEY", Region.Korea, Locale.fr_FR);
+                IWarcraftClient client = new WarcraftClient(
+                    new WarcraftClientOptions
+                    {
+                        ApiKey = "APIKEY",
+                        Region = Region.Korea,
+                        Locale = Locale.fr_FR
+                    },
+                    new MockHttpMessageHandler().ToHttpClient()
+                );
             });
         }
 
@@ -462,10 +472,12 @@ namespace ArgentPonyWarcraftClient.Tests
                 .Respond(mediaType: "application/json", content: responseContent);
 
             return new WarcraftClient(
-                apiKey: "keyhere",
-                region: Region.US,
-                locale: Locale.en_US,
-                client: mockHttp.ToHttpClient());
+                new WarcraftClientOptions
+                {
+                    ApiKey = "keyhere",
+                },
+                mockHttp.ToHttpClient()
+            );
         }
 
         private static IWarcraftClient BuildMockClient(string requestUri, string responseContent, HttpStatusCode statusCode)
@@ -480,10 +492,12 @@ namespace ArgentPonyWarcraftClient.Tests
                     content: responseContent);
 
             return new WarcraftClient(
-                apiKey: "keyhere",
-                region: Region.US,
-                locale: Locale.en_US,
-                client: mockHttp.ToHttpClient());
+                new WarcraftClientOptions
+                {
+                    ApiKey = "keyhere"
+                },
+                mockHttp.ToHttpClient()
+            );
         }
     }
 }
